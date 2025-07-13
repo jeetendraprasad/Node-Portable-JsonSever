@@ -10,6 +10,7 @@ SET NODE_FOLDER=node-v22.17.0-win-x64
 SET NODE_FOLDER_ZIP=node-v22.17.0-win-x64.zip
 SET FIRST_TIME_RUN_FILE=FirstTimeRunCompleted
 set "file=db.json"
+set "ps_test_script=TestScript.ps1"
 
 
 SET PATH="%WORKING_FOLDER1%\%NODE_FOLDER%"
@@ -79,11 +80,11 @@ SET PATH=%PATH%;"%WORKING_FOLDER1%\node_modules\.bin"
 
 echo 1 > "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%"
 
-%ComSpec% /C " npm start "
+start %ComSpec% /k " npm start "
 
-#json-server --watch db.json --port 3001
-#-m ./node_modules/json-server-auth
+powershell -noprofile -command " Start-Sleep -s 5 "
 
+powershell -noprofile -executionpolicy remotesigned -file "%WORKING_FOLDER1%\%ps_test_script%"
 pause
 
 @REM start cmd
