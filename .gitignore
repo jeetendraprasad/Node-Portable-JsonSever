@@ -4,3 +4,4 @@ package-lock.json
 node_modules/
 node-v22.17.0-win-x64/
 npm-cache-local/
+node-local/

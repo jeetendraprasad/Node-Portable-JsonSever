@@ -13,14 +13,16 @@ set "file=db.json"
 
 
 SET PATH="%WORKING_FOLDER1%\%NODE_FOLDER%"
-SET PATH=%PATH%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;"%WORKING_FOLDER1%\node_modules\.bin"
+SET PATH=%PATH%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;"%WORKING_FOLDER1%\node_modules\.bin";"%WORKING_FOLDER1%\node-local"
 
 
-if not exist "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%" (
+if not exist "%WORKING_FOLDER1%\%NODE_FOLDER%\" (
 	powershell -noprofile -executionpolicy remotesigned -command " Expand-Archive -Path '%WORKING_FOLDER1%\%NODE_FOLDER_ZIP%' -DestinationPath '%WORKING_FOLDER1%\' "
 )
 
 node -v
+
+#start cmd
 
 if not exist "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%" (
 	mkdir "%WORKING_FOLDER1%/npm-cache-global"
@@ -35,15 +37,23 @@ if not exist "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%" (
 	mkdir "%WORKING_FOLDER1%/node-local"
 	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm config set prefix '%WORKING_FOLDER1%/node-local' "
 	
-	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm install json-server "
+	@REM %ComSpec% /C npm install --save-dev json-server json-server-auth
+	
+	%ComSpec% /C npm install -g --save-dev json-server json-server-auth
+	
+	%ComSpec% /C npm install json-server json-server-auth
 
-	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm install json-server-auth "
+	%ComSpec% /C npm pkg set scripts.start="json-server --watch db.json --port 3001 -m ./node_modules/json-server-auth"
+	
+	@REM powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm install --save-dev json-server json-server-auth "
+
+	@REM powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm install json-server-auth "
 	
 	
-	
+	@REM powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm pkg set scripts.start='json-server --watch db.json --port 3001 -m ./node_modules/json-server-auth' "	
 )
 
-powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm pkg set scripts.start='json-server --watch db.json --port 3001 -m ./node_modules/json-server-auth' "
+
 
 
 #start cmd
@@ -79,8 +89,11 @@ SET PATH=%PATH%;"%WORKING_FOLDER1%\node_modules\.bin"
 
 echo 1 > "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%"
 
-npm start
+%ComSpec% /C " npm start "
 
 #json-server --watch db.json --port 3001
 #-m ./node_modules/json-server-auth
 
+pause
+
+start cmd
