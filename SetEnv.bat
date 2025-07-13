@@ -13,7 +13,7 @@ set "file=db.json"
 
 
 SET PATH="%WORKING_FOLDER1%\%NODE_FOLDER%"
-SET PATH=%PATH%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;"%WORKING_FOLDER1%\node_modules\.bin";"%WORKING_FOLDER1%\node-local"
+SET PATH=%PATH%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;
 
 
 if not exist "%WORKING_FOLDER1%\%NODE_FOLDER%\" (
@@ -26,31 +26,20 @@ node -v
 
 if not exist "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%" (
 	mkdir "%WORKING_FOLDER1%/npm-cache-global"
-	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm config set cache '%WORKING_FOLDER1%/npm-cache-global' --global "
+	%ComSpec% /C npm config set cache "%WORKING_FOLDER1%/npm-cache-global" --global
 
 	mkdir "%WORKING_FOLDER1%/node-global"
-	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm config set prefix '%WORKING_FOLDER1%/node-global' --global "
-
-	mkdir "%WORKING_FOLDER1%/npm-cache-local"
-	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm config set cache '%WORKING_FOLDER1%/npm-cache-local' "
-
-	mkdir "%WORKING_FOLDER1%/node-local"
-	powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm config set prefix '%WORKING_FOLDER1%/node-local' "
+	%ComSpec% /C npm config set prefix "%WORKING_FOLDER1%/node-global" --global
 	
 	@REM %ComSpec% /C npm install --save-dev json-server json-server-auth
 	
-	%ComSpec% /C npm install -g --save-dev json-server json-server-auth
+	%ComSpec% /C npm install json-server@0.17.4
 	
-	%ComSpec% /C npm install json-server json-server-auth
+	%ComSpec% /C npm install json-server-auth
 
-	%ComSpec% /C npm pkg set scripts.start="json-server --watch db.json --port 3001 -m ./node_modules/json-server-auth"
-	
-	@REM powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm install --save-dev json-server json-server-auth "
+	%ComSpec% /C npm pkg set scripts.start="json-server-auth --watch db.json --port 3001"
 
-	@REM powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm install json-server-auth "
-	
-	
-	@REM powershell -noprofile -executionpolicy remotesigned -command " & %NODE_FOLDER%\npm pkg set scripts.start='json-server --watch db.json --port 3001 -m ./node_modules/json-server-auth' "	
+	%ComSpec% /C npm install
 )
 
 
@@ -75,7 +64,8 @@ if not exist "%WORKING_FOLDER1%\%file%" (
 		echo   "posts": [
 		echo     { "id": 1, "title": "json-server" },
 		echo     { "id": 2, "title": "node js" }
-		echo   ]
+		echo   ],
+		echo   "users": []
 		echo }
 	) > "%file%"
 
@@ -96,4 +86,4 @@ echo 1 > "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%"
 
 pause
 
-start cmd
+@REM start cmd
