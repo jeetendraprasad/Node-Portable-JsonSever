@@ -14,6 +14,7 @@ set "ps_test_script=TestScript.ps1"
 
 
 SET PATH="%WORKING_FOLDER1%\%NODE_FOLDER%"
+SET PATH=%PATH%;"%WORKING_FOLDER1%\node_modules\.bin"
 SET PATH=%PATH%;%SystemRoot%\System32\WindowsPowerShell\v1.0\;
 
 
@@ -26,11 +27,15 @@ node -v
 #start cmd
 
 if not exist "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%" (
-	mkdir "%WORKING_FOLDER1%/npm-cache-global"
-	%ComSpec% /C npm config set cache "%WORKING_FOLDER1%/npm-cache-global" --global
 
-	mkdir "%WORKING_FOLDER1%/node-global"
-	%ComSpec% /C npm config set prefix "%WORKING_FOLDER1%/node-global" --global
+	mkdir "%WORKING_FOLDER1%\USERHOME"
+	# NOTE NO double quotes in USERHOME
+	set HOME=%WORKING_FOLDER1%\USERHOME
+
+
+	mkdir "%WORKING_FOLDER1%\USERCACHE\"
+	mkdir "%WORKING_FOLDER1%\USER-PREFIX"
+
 	
 	@REM %ComSpec% /C npm install --save-dev json-server json-server-auth
 	
@@ -43,7 +48,11 @@ if not exist "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%" (
 	%ComSpec% /C npm install
 )
 
+%ComSpec% /C npm config get cache
+%ComSpec% /C npm config set cache "%WORKING_FOLDER1%\USERCACHE"
 
+%ComSpec% /C npm config get prefix
+%ComSpec% /C npm config set prefix "%WORKING_FOLDER1%\USER-PREFIX"
 
 
 #start cmd
@@ -76,13 +85,11 @@ if not exist "%WORKING_FOLDER1%\%file%" (
 
 
 
-SET PATH=%PATH%;"%WORKING_FOLDER1%\node_modules\.bin"
-
 echo 1 > "%WORKING_FOLDER1%\%FIRST_TIME_RUN_FILE%"
 
 start %ComSpec% /k " npm start "
 
-powershell -noprofile -command " Start-Sleep -s 5 "
+powershell -noprofile -command " Start-Sleep -s 15 "
 
 powershell -noprofile -executionpolicy remotesigned -file "%WORKING_FOLDER1%\%ps_test_script%"
 pause
